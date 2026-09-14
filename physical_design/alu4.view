@@ -1,0 +1,35 @@
+# ============================================================
+# MMMC setup for alu4
+# ============================================================
+
+# Typical Sky130 timing library
+create_library_set -name LIB_TT \
+    -timing [list \
+    /data/pdk/Sky130_cadence_pdk/sky130_scl_9T_0.1.1/sky130_scl_9T/lib/sky130_tt_1.8_25_nldm.lib]
+
+# Typical RC corner
+create_rc_corner -name RC_TYP \
+    -qx_tech_file /data/pdk/Sky130_cadence_pdk/sky130_release_0.1.0/quantus/extraction/typical/qrcTechFile
+
+# Delay corner
+create_delay_corner -name DELAY_TYP \
+    -library_set LIB_TT \
+    -rc_corner RC_TYP
+
+# Constraint mode
+create_constraint_mode -name FUNC \
+    -sdc_files [list /home/amiru/cadence_alu/innovus/scripts/alu4.sdc]
+
+# Analysis views
+create_analysis_view -name VIEW_SETUP \
+    -constraint_mode FUNC \
+    -delay_corner DELAY_TYP
+
+create_analysis_view -name VIEW_HOLD \
+    -constraint_mode FUNC \
+    -delay_corner DELAY_TYP
+
+# Activate setup and hold views
+set_analysis_view \
+    -setup [list VIEW_SETUP] \
+    -hold [list VIEW_HOLD]
